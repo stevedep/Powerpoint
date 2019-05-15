@@ -15,7 +15,19 @@ Sub time()
         End If
         i = i + 1
     Next shp
+    nu = Hour(Now) & ":" & Minute(Now)
     
-    MsgBox sld.Shapes(Id).TextFrame.TextRange.Text
+    'MsgBox sld.Shapes(Id).TextFrame.TextRange.Text
+    Status = DateDiff("n", sld.Shapes(Id).TextFrame.TextRange.Text, nu)
+    
+   i = 1
+    For Each shp In sld.Shapes
+        If shp.Name = "txtStatus" Then
+           Id = i
+        End If
+        i = i + 1
+    Next shp
+    
+    sld.Shapes(Id).TextFrame.TextRange.Text = Status
     
 End Sub
