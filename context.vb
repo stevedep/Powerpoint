@@ -1,13 +1,15 @@
+Sub context()
+   
     
     Dim sld As Slide
     Dim shp As Shape
     
     Set sld = Application.ActiveWindow.View.Slide
-    
-    
-    
+      
     y = ActiveWindow.Selection.ShapeRange.Top
     x = ActiveWindow.Selection.ShapeRange.Left
+    w = ActiveWindow.Selection.ShapeRange.Width
+    h = ActiveWindow.Selection.ShapeRange.Height
     
     
     Windows(1).Selection.Copy
@@ -22,11 +24,37 @@ sld.Shapes.AddShape Type:=msoShapeRectangle, _
     
     ActivePresentation.Slides(sld.SlideIndex).Shapes(ActivePresentation.Slides(sld.SlideIndex).Shapes.Count).Fill.ForeColor.RGB = RGB(172, 185, 202)
     ActivePresentation.Slides(sld.SlideIndex).Shapes(ActivePresentation.Slides(sld.SlideIndex).Shapes.Count).Fill.Transparency = 0.2
-    
+
     sld.Shapes.Range(Array(ActivePresentation.Slides(sld.SlideIndex).Shapes.Count, n)).Select
     
     ActiveWindow.Selection.ShapeRange.MergeShapes msoMergeCombine
    
 
-Set sld = Nothing
 Set shp = Nothing
+
+Dim ffb As FreeformBuilder
+Dim myshape As Shape
+Dim currentslide As Slide
+
+Set currentslide = sld 'ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
+
+Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x + w, y)
+With ffb
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 135
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 30
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 200, 30
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 200, 450
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 450
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 350
+    .AddNodes msoSegmentLine, msoEditingAuto, x + w, y + h
+    
+End With
+
+Set myshape = ffb.ConvertToShape
+myshape.Fill.ForeColor.RGB = RGB(256, 256, 256)
+
+
+Set sld = Nothing
+Set myshape = Nothing
+
+End Sub
