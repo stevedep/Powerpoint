@@ -5,6 +5,9 @@ Sub context()
     Dim shp As Shape
     
     Set sld = Application.ActiveWindow.View.Slide
+    
+    sld.Duplicate
+    
       
     y = ActiveWindow.Selection.ShapeRange.Top
     x = ActiveWindow.Selection.ShapeRange.Left
@@ -38,17 +41,31 @@ Dim currentslide As Slide
 
 Set currentslide = sld 'ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
 
-Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x + w, y)
-With ffb
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 135
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 30
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 200, 30
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 200, 450
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 450
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 350
-    .AddNodes msoSegmentLine, msoEditingAuto, x + w, y + h
-    
-End With
+Links = MsgBox("Left?", vbYesNo + vbQuestion, "Side")
+
+If Links = vbYes Then
+       Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x, y)
+        With ffb
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 135
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 30
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 300, 30
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 300, 450
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 450
+            .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 350
+            .AddNodes msoSegmentLine, msoEditingAuto, x, y + h
+        End With
+Else
+         Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x + w, y)
+        With ffb
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 135
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 30
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 300, 30
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 300, 450
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 450
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 350
+            .AddNodes msoSegmentLine, msoEditingAuto, x + w, y + h
+        End With
+End If
 
 Set myshape = ffb.ConvertToShape
 myshape.Fill.ForeColor.RGB = RGB(256, 256, 256)
@@ -58,3 +75,5 @@ Set sld = Nothing
 Set myshape = Nothing
 
 End Sub
+
+
