@@ -30,7 +30,7 @@ Sub menu()
         For Each sld2 In ActivePresentation.Slides
             For Each shp In sld2.Shapes
                 If shp.HasTextFrame Then
-                        If shp.Visible = msoFalse And shp.TextFrame.TextRange.Text Like "*" & Title & "*" Then
+                    If shp.Visible = msoFalse And shp.Name  Like "*" & Title & "*" Then
                              With ActivePresentation.Slides(1).Shapes(Id).Table.Cell(1, j).Shape.TextFrame.TextRange
                                 .Font.Name = "Arial"
                                 .Font.Size = 6
