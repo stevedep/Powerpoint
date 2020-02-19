@@ -8,7 +8,7 @@ Sub loop_excel()
 
     Set lstActivities = book.Worksheets("Sheet1").Range("Table2").ListObject
         For i = 1 To lstActivities.ListRows.Count
-            If lstActivities.ListColumns("ID").DataBodyRange(i).Value = "1" Then
+            'If lstActivities.ListColumns("ID").DataBodyRange(i).Value = "1" Then
                 'MsgBox lstActivities.ListColumns("Name").DataBodyRange(i).Value
                context_new lstActivities.ListColumns("ID").DataBodyRange(i).Value
                 
@@ -31,12 +31,20 @@ Sub loop_excel()
                 vbNewLine & vbNewLine & "Status" & vbNewLine & _
                 lstActivities.ListColumns("Status").DataBodyRange(i).Value
 
-                tr.Lines(2, 1).Font.Bold = msoTrue
-                 tr.Lines(5, 1).Font.Bold = msoTrue
+                tr.Paragraphs(1).Font.Bold = msoTrue
+                tr.Paragraphs(3).Font.Bold = msoTrue
+                tr.Paragraphs(6).Font.Bold = msoTrue
+                tr.Paragraphs(9).Font.Bold = msoTrue
+                tr.Paragraphs(11).Font.Bold = msoTrue
+                tr.Paragraphs(15).Font.Bold = msoTrue
+                tr.Paragraphs(18).Font.Bold = msoTrue
+                tr.Paragraphs(21).Font.Bold = msoTrue
+                
+                ' tr.Lines(5).Font.Bold = msoTrue
                 
               
                
-            End If
+            'End If
         Next i
                     
 'close off
@@ -47,19 +55,19 @@ Sub loop_excel()
     Set currentslide = Nothing
     Set tr = Nothing
     
-    MsgBox "done"
+    'MsgBox "done"
 
 End Sub
 
 Sub context_new(id As String)
 'select slide
-    planningslidenr = InputBox("Which Slide contains the planning")
+    planningslidenr = 5 'InputBox("Which Slide contains the planning")
     Set shps = ActivePresentation.Slides(CInt(planningslidenr)).Shapes
 
     Dim a As Integer
 
     For a = 1 To shps.Count
-            If shps(a).Name = "1" Then
+            If shps(a).Name = id Then
                 context CInt(planningslidenr), a
             End If
     Next a
