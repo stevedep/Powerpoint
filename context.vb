@@ -4,46 +4,68 @@ Sub loop_excel()
     Dim app As New Excel.Application
     app.Visible = False 'Visible is False by default, so this isn't necessary
     Dim book As Excel.Workbook
-    Set book = app.Workbooks.Add("C:\Users\310267217\OneDrive - Philips\vba\contexttable.xlsx")
+    Set book = app.Workbooks.Add("C:\Users\310267217\OneDrive - Philips\vba\planning.xlsx")
 
-    Set lstActivities = book.Worksheets("Sheet1").Range("Table2").ListObject
+    Set lstActivities = book.Worksheets("Sheet1").Range("VSTS_3abe355c_0e4e_4089_a5c3_0eea1a4d1644").ListObject
         For i = 1 To lstActivities.ListRows.Count
             'If lstActivities.ListColumns("ID").DataBodyRange(i).Value = "1" Then
                 'MsgBox lstActivities.ListColumns("Name").DataBodyRange(i).Value
-               context_new lstActivities.ListColumns("ID").DataBodyRange(i).Value
-                
-                Set currentslide = ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
-                Set tr = currentslide.Shapes(currentslide.Shapes.Count).TextFrame.TextRange
-                tr.Font.Size = 12
-                tr.Text = lstActivities.ListColumns("Name").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Objective" & vbNewLine & _
-                lstActivities.ListColumns("Objective").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Approach" & vbNewLine & _
-                lstActivities.ListColumns("Approach").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Input" & vbNewLine & _
-                lstActivities.ListColumns("Input").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Output / Deliverable" & vbNewLine & _
-                lstActivities.ListColumns("Output").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Responsible" & vbNewLine & _
-                lstActivities.ListColumns("Responsible").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Timing" & vbNewLine & _
-                lstActivities.ListColumns("Timing").DataBodyRange(i).Value & _
-                vbNewLine & vbNewLine & "Status" & vbNewLine & _
-                lstActivities.ListColumns("Status").DataBodyRange(i).Value
-
-                tr.Paragraphs(1).Font.Bold = msoTrue
-                tr.Paragraphs(3).Font.Bold = msoTrue
-                tr.Paragraphs(6).Font.Bold = msoTrue
-                tr.Paragraphs(9).Font.Bold = msoTrue
-                tr.Paragraphs(11).Font.Bold = msoTrue
-                tr.Paragraphs(15).Font.Bold = msoTrue
-                tr.Paragraphs(18).Font.Bold = msoTrue
-                tr.Paragraphs(21).Font.Bold = msoTrue
+               
+               If Len(LTrim(RTrim(lstActivities.ListColumns("External ID").DataBodyRange(i).Value))) > 0 And lstActivities.ListColumns("External ID").DataBodyRange(i).Value > 9 Then
+                   context_new lstActivities.ListColumns("External ID").DataBodyRange(i).Value
+                    
+                    Set currentslide = ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
+                    Set tr = currentslide.Shapes(currentslide.Shapes.Count).TextFrame.TextRange
+                    tr.Font.Size = 12
+                    tr.Text = lstActivities.ListColumns("Title").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Objective" & vbNewLine & _
+                    lstActivities.ListColumns("Description").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Approach" & vbNewLine & _
+                    lstActivities.ListColumns("Generic03").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Input" & vbNewLine & _
+                    lstActivities.ListColumns("Generic02").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Output / Deliverable" & vbNewLine & _
+                    lstActivities.ListColumns("Acceptance Criteria").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Responsible" & vbNewLine & _
+                    lstActivities.ListColumns("Assigned To").DataBodyRange(i).Value & _
+                    vbNewLine & vbNewLine & "Timing" & vbNewLine & _
+                    lstActivities.ListColumns("Iteration Path").DataBodyRange(i).Value '& _
+                   ' vbNewLine & vbNewLine & "Status" & vbNewLine & _
+                   ' lstActivities.ListColumns("Status").DataBodyRange(i).Value
+    
+    Debug.Print "id:"
+    Debug.Print lstActivities.ListColumns("External ID").DataBodyRange(i).Value & vbNewLine
+    
+                    tr.Paragraphs(1).Font.Bold = msoTrue
+                    tr.Paragraphs(1).Font.Size = 18
+                    tr.Paragraphs(1).Font.Color = RGB(0, 137, 196)
+                    
+                  Dim arr As Variant
+                    arr = Array("Objective", "Approach", "Input", "Output / Deliverable", "Responsible", "Timing")
+                  For Each word In arr
+                    Set foundText = tr.Find(FindWhat:=word)
+                    Do While Not (foundText Is Nothing)
+                        With foundText
+                            .Font.Bold = True
+                            Set foundText = _
+                                tr.Find(FindWhat:=word, _
+                                After:=.Start + .Length - 1)
+                        End With
+                    Loop
+                Next
+                    
+                    'tr.Paragraphs(3).Font.Bold = msoTrue
+                    'tr.Paragraphs(6).Font.Bold = msoTrue
+                    'tr.Paragraphs(9).Font.Bold = msoTrue
+                    'tr.Paragraphs(11).Font.Bold = msoTrue
+                    'tr.Paragraphs(15).Font.Bold = msoTrue
+                    'tr.Paragraphs(18).Font.Bold = msoTrue
+                'tr.Paragraphs(21).Font.Bold = msoTrue
                 
                 ' tr.Lines(5).Font.Bold = msoTrue
                 
               
-               
+            End If
             'End If
         Next i
                     
@@ -59,9 +81,9 @@ Sub loop_excel()
 
 End Sub
 
-Sub context_new(id As String)
+Function context_new(id As String)
 'select slide
-    planningslidenr = 5 'InputBox("Which Slide contains the planning")
+    planningslidenr = 2 'InputBox("Which Slide contains the planning")
     Set shps = ActivePresentation.Slides(CInt(planningslidenr)).Shapes
 
     Dim a As Integer
@@ -74,7 +96,7 @@ Sub context_new(id As String)
     
    
 
-End Sub
+End Function
 
 
 Sub context(slidenr As Integer, shapenr As Integer)
@@ -122,33 +144,37 @@ Sub context(slidenr As Integer, shapenr As Integer)
     
     Set currentslide = sld 'ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
 
-    Links = MsgBox("Left?", vbYesNo + vbQuestion, "Side")
+    'Links = MsgBox("Left?", vbYesNo + vbQuestion, "Side")
     
-    If Links = vbYes Then
+    If x > 600 Then
            Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x, y)
             With ffb
                 .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 135
                 .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 30
                 .AddNodes msoSegmentLine, msoEditingAuto, x - 300, 30
-                .AddNodes msoSegmentLine, msoEditingAuto, x - 300, 450
-                .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 450
+                .AddNodes msoSegmentLine, msoEditingAuto, x - 300, 520
+                .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 520
                 .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 350
                 .AddNodes msoSegmentLine, msoEditingAuto, x, y + h
             End With
+            
+            currentslide.Shapes.AddTextbox(msoTextOrientationHorizontal, _
+                Left:=x - 300, Top:=30, Width:=250, Height:=500).TextFrame _
+                .TextRange.Text = ""
     Else
              Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x + w, y)
             With ffb
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 135
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 30
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 300, 30
-                .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 300, 450
-                .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 450
+                .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40 + 300, 520
+                .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 520
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 350
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w, y + h
             End With
             
            currentslide.Shapes.AddTextbox(msoTextOrientationHorizontal, _
-                Left:=x + 80, Top:=30, Width:=300, Height:=500).TextFrame _
+                Left:=x + w + 40, Top:=30, Width:=300, Height:=500).TextFrame _
                 .TextRange.Text = ""
 
         
