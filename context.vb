@@ -11,8 +11,9 @@ Sub loop_excel()
             'If lstActivities.ListColumns("ID").DataBodyRange(i).Value = "1" Then
                 'MsgBox lstActivities.ListColumns("Name").DataBodyRange(i).Value
                
-               If Len(LTrim(RTrim(lstActivities.ListColumns("External ID").DataBodyRange(i).Value))) > 0 And lstActivities.ListColumns("External ID").DataBodyRange(i).Value > 9 Then
-                   context_new lstActivities.ListColumns("External ID").DataBodyRange(i).Value
+               If Len(LTrim(RTrim(lstActivities.ListColumns("External ID").DataBodyRange(i).Value))) > 0 Then
+                   
+                   If context_new(lstActivities.ListColumns("External ID").DataBodyRange(i).Value) = 1 Then
                     
                     Set currentslide = ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
                     Set tr = currentslide.Shapes(currentslide.Shapes.Count).TextFrame.TextRange
@@ -63,8 +64,7 @@ Sub loop_excel()
                 'tr.Paragraphs(21).Font.Bold = msoTrue
                 
                 ' tr.Lines(5).Font.Bold = msoTrue
-                
-              
+               End If
             End If
             'End If
         Next i
@@ -81,8 +81,9 @@ Sub loop_excel()
 
 End Sub
 
-Function context_new(id As String)
+Function context_new(id As String) As Integer
 'select slide
+context_new = 0
     planningslidenr = 2 'InputBox("Which Slide contains the planning")
     Set shps = ActivePresentation.Slides(CInt(planningslidenr)).Shapes
 
@@ -91,6 +92,7 @@ Function context_new(id As String)
     For a = 1 To shps.Count
             If shps(a).Name = id Then
                 context CInt(planningslidenr), a
+                context_new = 1
             End If
     Next a
     
@@ -100,6 +102,7 @@ End Function
 
 
 Sub context(slidenr As Integer, shapenr As Integer)
+
    
     
     Dim sld As Slide
