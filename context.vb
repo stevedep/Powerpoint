@@ -1,19 +1,21 @@
-
 Sub loop_excel()
  'load excel
-    Dim app As New Excel.Application
-    app.Visible = False 'Visible is False by default, so this isn't necessary
-    Dim book As Excel.Workbook
-    Set book = app.Workbooks.Add("C:\Users\310267217\OneDrive - Philips\vba\planning.xlsx")
+     Dim app As New Excel.Application
+     app.Visible = False 'Visible is False by default, so this isn't necessary
+     Dim book As Excel.Workbook
+     Set book = app.Workbooks.Add(FileOpenDialogBox)
+    
 
-    Set lstActivities = book.Worksheets("Sheet1").Range("VSTS_3abe355c_0e4e_4089_a5c3_0eea1a4d1644").ListObject
+    Dim planningslidenr As Integer
+    planningslidenr = InputBox("Which Slide contains the planning")
+    Set lstActivities = book.Worksheets("Sheet1").ListObjects(1)
         For i = 1 To lstActivities.ListRows.Count
             'If lstActivities.ListColumns("ID").DataBodyRange(i).Value = "1" Then
                 'MsgBox lstActivities.ListColumns("Name").DataBodyRange(i).Value
                
                If Len(LTrim(RTrim(lstActivities.ListColumns("External ID").DataBodyRange(i).Value))) > 0 Then
                    
-                   If context_new(lstActivities.ListColumns("External ID").DataBodyRange(i).Value) = 1 Then
+                   If context_new(lstActivities.ListColumns("External ID").DataBodyRange(i).Value, planningslidenr) = 1 Then
                     
                     Set currentslide = ActivePresentation.Slides(ActiveWindow.View.Slide.SlideIndex)
                     Set tr = currentslide.Shapes(currentslide.Shapes.Count).TextFrame.TextRange
@@ -81,10 +83,10 @@ Sub loop_excel()
 
 End Sub
 
-Function context_new(id As String) As Integer
+Function context_new(id As String, planningslidenr As Integer) As Integer
 'select slide
 context_new = 0
-    planningslidenr = 2 'InputBox("Which Slide contains the planning")
+    
     Set shps = ActivePresentation.Slides(CInt(planningslidenr)).Shapes
 
     Dim a As Integer
@@ -131,7 +133,7 @@ Sub context(slidenr As Integer, shapenr As Integer)
      sld.Shapes.AddShape Type:=msoShapeRectangle, _
     Left:=0, Top:=0, Width:=960, Height:=540
      sld.Shapes(sld.Shapes.Count).Fill.ForeColor.RGB = RGB(172, 185, 202)
-     sld.Shapes(sld.Shapes.Count).Fill.Transparency = 0.2
+     sld.Shapes(sld.Shapes.Count).Fill.Transparency = 0.35
      ActiveWindow.View.GotoSlide slidenr + 1
     
     sld.Shapes.Range(Array(sld.Shapes.Count, n)).Select
@@ -203,6 +205,28 @@ Sub context(slidenr As Integer, shapenr As Integer)
     Set currentslide = Nothing
 
 End Sub
+
+
+
+
+Function FileOpenDialogBox() As String
+ 
+'Display a Dialog Box that allows to select a single file.
+'The path for the file picked will be stored in fullpath variable
+  With Application.FileDialog(msoFileDialogFilePicker)
+        'Makes sure the user can select only one file
+        .AllowMultiSelect = False
+        'Filter to just the following types of files to narrow down selection options
+        .Filters.Add "Excel Files", "*.xlsx; *.xlsm; *.xls; *.xlsb", 1
+        'Show the dialog box
+        .Show
+        
+        'Store in fullpath variable
+        FileOpenDialogBox = .SelectedItems.Item(1)
+        
+    End With
+ 
+End Function
 
 
 
