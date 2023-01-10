@@ -72,8 +72,10 @@ fn_search_bar_and_create_callout = 0
     Set shps = ActivePresentation.Slides(CInt(planningslidenr)).Shapes
     Dim a As Integer
 
+' We iterate over the shapes in search for the one that has a name that is equal to the id of the task in excel
     For a = 1 To shps.Count
             If shps(a).Name = id Then
+                'once found we create a new call out
                 fn_new_callout CInt(planningslidenr), a
                 fn_search_bar_and_create_callout = 1
             End If
@@ -89,39 +91,32 @@ Sub fn_new_callout(slidenr As Integer, shapenr As Integer)
     Set sld = ActivePresentation.Slides(slidenr)
     Set shp = sld.Shapes(shapenr)
     
-    sld.Duplicate
-      
-    y = shp.Top
-    x = shp.Left
-    w = shp.Width
-    h = shp.Height
-   
-    'shp.Copy
+    sld.Duplicate 'duplicate the planning slide to add shapes to that one
+    
+    ' Copy the x, y, width etc from the bar
+    y = shp.Top: x = shp.Left: w = shp.Width: h = shp.Height
+       
     Set sld = ActivePresentation.Slides(slidenr + 1)
-    'sld.Shapes.Paste
-     sld.Shapes(sld.Shapes.Count).Top = y
-     sld.Shapes(sld.Shapes.Count).Left = x
-     
-     n = sld.Shapes.Count
+   
+    'Add the semi transparant overlay
      sld.Shapes.AddShape Type:=msoShapeRectangle, _
     Left:=0, Top:=0, Width:=960, Height:=540
      sld.Shapes(sld.Shapes.Count).Fill.ForeColor.RGB = RGB(172, 185, 202)
      sld.Shapes(sld.Shapes.Count).Fill.Transparency = 0.35
      ActiveWindow.View.GotoSlide slidenr + 1
     
+    ' bring the bar back to the front
     sld.Shapes(shapenr).ZOrder (msoBringToFront)
-    
-    'sld.Shapes.Range(Array(sld.Shapes.Count, n)).Select
-    'ActiveWindow.Selection.ShapeRange.MergeShapes msoMergeCombine
-        
+            
+    ' cleanup for this part
     Set shp = Nothing
-    
     Dim ffb As FreeformBuilder
     Dim myshape As Shape
     Dim currentslide As Slide
+        
+    Set currentslide = sld 'bit redundant..
     
-    Set currentslide = sld
-    
+    ' depending on the x position of the bar we draw the call out either on the left or right side
     If x > Application.ActivePresentation.PageSetup.SlideWidth * 0.4 Then
            Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x, y)
             With ffb
@@ -148,12 +143,12 @@ Sub fn_new_callout(slidenr As Integer, shapenr As Integer)
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w + 40, 350
                 .AddNodes msoSegmentLine, msoEditingAuto, x + w, y + h
             End With
-            
+            'adding a textbox
            currentslide.Shapes.AddTextbox(msoTextOrientationHorizontal, _
                 Left:=x + w + 40, Top:=30, Width:=300, Height:=500).TextFrame _
                 .TextRange.Text = ""
     End If
-    
+    'making the call out white
     Set myshape = ffb.ConvertToShape
     myshape.Fill.ForeColor.RGB = RGB(256, 256, 256)
     currentslide.Shapes(currentslide.Shapes.Count).ZOrder (msoSendBackward)
