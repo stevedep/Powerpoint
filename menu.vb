@@ -129,13 +129,56 @@ Sub copy()
 End Sub
 
 
+Sub show_hide_menu_labels()
+    Dim sld As Slide
+    Dim sld2 As Slide
+    Dim shp As Shape
+    Set sld = Application.ActiveWindow.View.Slide
+      Dim Answer As Variant
+    Answer = MsgBox("Show? No will hide", vbYesNoCancel)
+    Select Case Answer
+        Case vbYes
+            'MsgBox "You pressed Yes"
+        Case vbNo
+            'MsgBox "You pressed No"
+        Case Else
+            'MsgBox "You pressed Cancel"
+    End Select
+    
+    j = 1
+    'loop over the slides, then the shapes, when we find a shaped Named Menu we will paste the table,
+        For Each sld2 In ActivePresentation.Slides
+            For Each shp In sld2.Shapes
+                     ' get the menu table id
+                    i = 1
+                    For Each shp2 In sld2.Shapes
+                       If shp2.Name = "Menu" Then
+                        Id = i
+                            If Answer = vbYes Then
+                                sld2.Shapes(Id).Visible = msoTrue
+                            ElseIf Answer = vbNo Then
+                                sld2.Shapes(Id).Visible = msoFalse
+                        End If
+                     End If
+                     i = i + 1
+                    Next shp2
+
+            Next shp
+        Next sld2
+        
+einde:
+MsgBox "Ending function"
+        
+End Sub
+
+
 Sub new_font_size()
     Dim sld As Slide
     Dim sld2 As Slide
     Dim shp As Shape
     Set sld = Application.ActiveWindow.View.Slide
     i = 1
-    FontSize = InputBox("Increase FontSize by how much")
+    FontSize = InputBox("New size?")
     
     j = 1
     'loop over the slides, then the shapes, when we find a shaped Named Menu we will paste the table,
