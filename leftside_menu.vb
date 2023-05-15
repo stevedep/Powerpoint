@@ -56,7 +56,9 @@ Sub CreateRectanglesWithCircles() 'houden
         CircleLeft = 20 '(Application.ActivePresentation.PageSetup.SlideWidth - CircleDiameter) / 2
         CircleTop = RectTop + (RectHeight - CircleDiameter) / 2
         Set oCircle = oSlide.shapes.AddShape(msoShapeOval, CircleLeft, CircleTop, CircleDiameter, CircleDiameter)
-        
+        With oCircle.ActionSettings(ppMouseClick).Hyperlink
+            .SubAddress = slidesArray(i, 3) & ". " & slidesArray(i, 4)
+        End With
        ' rectangleNames(j + 1) = oCircle.Name
         
         
@@ -81,7 +83,9 @@ Sub CreateRectanglesWithCircles() 'houden
         oText2.TextFrame2.textRange.Font.Name = "Calibri"
         
         oText2.TextFrame2.VerticalAnchor = msoAnchorMiddle ' Align text vertically in center of circle
-        
+          With oText2.ActionSettings(ppMouseClick).Hyperlink
+            .SubAddress = slidesArray(i, 3) & ". " & slidesArray(i, 4)
+        End With
         
         ' Group circle and text shapes and move them to the front of the rectangle
         Set oGroup = oSlide.shapes.Range(Array(oCircle.Name, oText.Name)).Group
