@@ -18,6 +18,8 @@ Sub CreateRectanglesWithCircles() 'houden
     Dim TextLeft As Single
     Dim TextTop As Single
     Dim RectSpacing As Single ' Variable for spacing between rectangles
+    Dim TopMargin As Single
+    Dim BottomMargin As Single
     
     ' Set number of rectangles to create and spacing between rectangles
     RectSpacing = 10 ' Set the vertical spacing between rectangles
@@ -27,8 +29,12 @@ Sub CreateRectanglesWithCircles() 'houden
         
     slidesArray = FindMenuShapes()
     NumRectangles = UBound(slidesArray, 1)
+    TopMargin = 10
+    BottomMargin = 10
+    
+    
     ' Calculate height of each rectangle
-    RectHeight = (Application.ActivePresentation.PageSetup.SlideHeight - RectSpacing * (NumRectangles - 1)) / NumRectangles ' Modify calculation to include spacing
+    RectHeight = (Application.ActivePresentation.PageSetup.SlideHeight - TopMargin - BottomMargin - RectSpacing * (NumRectangles - 1)) / NumRectangles ' Modify calculation to include spacing
     
     ' Calculate diameter of circle to fit within each rectangle
     CircleDiameter = RectHeight * 0.8
@@ -40,10 +46,10 @@ Sub CreateRectanglesWithCircles() 'houden
         
         
                ' Calculate top position of current rectangle
-        RectTop = (i - 1) * (RectHeight + RectSpacing) ' Modify calculation to include spacing
+        RectTop = ((i - 1) * (RectHeight + RectSpacing)) + TopMargin ' Modify calculation to include spacing
         
         ' Add new rectangle shape to slide
-        Set oShape = oSlide.shapes.AddShape(msoShapeRectangle, 0, RectTop, Application.ActivePresentation.PageSetup.SlideWidth / 3, RectHeight)
+        Set oShape = oSlide.shapes.AddShape(msoShapeRectangle, 15, RectTop, Application.ActivePresentation.PageSetup.SlideWidth / 3, RectHeight)
                 
         
         ' Add circle shape to rectangle
@@ -55,12 +61,13 @@ Sub CreateRectanglesWithCircles() 'houden
         
         
         ' Add text shape to circle
-        TextLeft = CircleLeft + CircleDiameter / 2.5
-        TextTop = CircleTop + CircleDiameter / 3
+        TextLeft = CircleLeft + CircleDiameter / 3
+        TextTop = CircleTop + CircleDiameter / 3.5
         Set oText = oSlide.shapes.AddTextbox(msoTextOrientationHorizontal, TextLeft, TextTop, CircleDiameter, CircleDiameter)
         oText.TextFrame2.textRange.Text = i ' Set text to instance number
-        oText.TextFrame2.textRange.Font.Bold = msoTrue ' Make text bold
+        'oText.TextFrame2.textRange.Font.Bold = msoTrue ' Make text bold
         oText.TextFrame2.textRange.Font.Size = 20
+        oText.TextFrame2.textRange.Font.Fill.ForeColor.RGB = vbWhite
         oText.TextFrame2.VerticalAnchor = msoAnchorMiddle ' Align text vertically in center of circle
         
         'rectangleNames(j) = oShape.Name
@@ -68,7 +75,11 @@ Sub CreateRectanglesWithCircles() 'houden
         
         Set oText2 = oSlide.shapes.AddTextbox(msoTextOrientationHorizontal, TextLeft + 40, TextTop, Application.ActivePresentation.PageSetup.SlideWidth / 4, CircleDiameter)
         oText2.TextFrame2.textRange.Text = slidesArray(i, 2) ' Set text to instance number
-        oText2.TextFrame2.textRange.Font.Bold = msoTrue ' Make text bold
+        'oText2.TextFrame2.textRange.Font.Bold = msoTrue ' Make text bold
+        oText2.TextFrame2.textRange.Font.Size = 20
+        oText2.TextFrame2.textRange.Font.Fill.ForeColor.RGB = vbWhite
+        oText2.TextFrame2.textRange.Font.Name = "Calibri"
+        
         oText2.TextFrame2.VerticalAnchor = msoAnchorMiddle ' Align text vertically in center of circle
         
         
@@ -78,8 +89,9 @@ Sub CreateRectanglesWithCircles() 'houden
         oGroup.ZOrder msoBringToFront
         
         ' Format rectangle shape as desired (e.g. fill color, outline, etc.)
-        oShape.Fill.ForeColor.RGB = RGB(255, 0, 0) ' Red fill color
-        oShape.Line.ForeColor.RGB = RGB(0, 0, 255) ' Blue outline color
+        oShape.Fill.ForeColor.RGB = RGB(0, 137, 196) ' Red fill color
+        oShape.Fill.Transparency = 0.5 ' Red fill color
+        oShape.Line.ForeColor.RGB = RGB(0, 137, 196) ' Blue outline color
         'add link to menu item
         
         With oShape.ActionSettings(ppMouseClick).Hyperlink
@@ -181,7 +193,8 @@ Sub Highlightmenu()
                     Set shapeToFind3 = FindRectangleInGroup(shapeToFind2)
                     
                     If Not shapeToFind3 Is Nothing Then
-                        shapeToFind3.Fill.ForeColor.RGB = RGB(255, 255, 0) ' Change the color as needed
+                        'shapeToFind3.Fill.ForeColor.RGB = RGB(255, 255, 0) ' Change the color as needed
+                        shapeToFind3.Line.ForeColor.RGB = RGB(255, 195, 0)
                     End If
                     
                     Exit For
