@@ -56,6 +56,8 @@ Sub CreateRectanglesWithCircles() 'houden
         CircleLeft = 20 '(Application.ActivePresentation.PageSetup.SlideWidth - CircleDiameter) / 2
         CircleTop = RectTop + (RectHeight - CircleDiameter) / 2
         Set oCircle = oSlide.shapes.AddShape(msoShapeOval, CircleLeft, CircleTop, CircleDiameter, CircleDiameter)
+        oCircle.Fill.ForeColor.RGB = RGB(0, 137, 196)
+        oCircle.Line.ForeColor.RGB = RGB(0, 137, 196)
         With oCircle.ActionSettings(ppMouseClick).Hyperlink
             .SubAddress = slidesArray(i, 3) & ". " & slidesArray(i, 4)
         End With
@@ -96,6 +98,7 @@ Sub CreateRectanglesWithCircles() 'houden
         oShape.Fill.ForeColor.RGB = RGB(0, 137, 196) ' Red fill color
         oShape.Fill.Transparency = 0.5 ' Red fill color
         oShape.Line.ForeColor.RGB = RGB(0, 137, 196) ' Blue outline color
+        oShape.Line.Weight = 3
         'add link to menu item
         
         With oShape.ActionSettings(ppMouseClick).Hyperlink
@@ -163,7 +166,7 @@ Sub PasteShapeToMenuSlides(ByVal shape As shape)
         For Each textBox In slide.shapes
             If textBox.Type = msoTextBox Then
                 If textBox.Name = "Menu" Then
-                    shape.copy
+                    shape.Copy
                     slide.shapes.Paste
                     Exit For
                 End If
@@ -297,3 +300,45 @@ Function FindShapeInGroup(shapes As shapes, targetText As String) As shape 'deze
     Next
 End Function
 
+
+Sub show_hide_menu_labels()
+    Dim sld As slide
+    Dim sld2 As slide
+    Dim shp As shape
+    Set sld = Application.ActiveWindow.View.slide
+      Dim Answer As Variant
+    Answer = MsgBox("Show? No will hide", vbYesNoCancel)
+    Select Case Answer
+        Case vbYes
+            'MsgBox "You pressed Yes"
+        Case vbNo
+            'MsgBox "You pressed No"
+        Case Else
+            'MsgBox "You pressed Cancel"
+    End Select
+    
+    j = 1
+    'loop over the slides, then the shapes, when we find a shaped Named Menu we will paste the table,
+        For Each sld2 In ActivePresentation.Slides
+            For Each shp In sld2.shapes
+                     ' get the menu table id
+                    i = 1
+                    For Each shp2 In sld2.shapes
+                       If shp2.Name = "Menu" Then
+                        Id = i
+                            If Answer = vbYes Then
+                                sld2.shapes(Id).Visible = msoTrue
+                            ElseIf Answer = vbNo Then
+                                sld2.shapes(Id).Visible = msoFalse
+                        End If
+                     End If
+                     i = i + 1
+                    Next shp2
+
+            Next shp
+        Next sld2
+        
+einde:
+MsgBox "Ending function"
+        
+End Sub
