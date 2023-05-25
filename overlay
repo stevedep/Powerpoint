@@ -1,0 +1,85 @@
+Sub AddTransparentRectangleWithMergeShapes()
+    Dim slide As slide
+    Dim rectangle As Shape
+    Dim selectedShape As Shape
+    Dim duplicateShape As Shape
+    
+    ' Get the current slide
+    Set slide = ActiveWindow.View.slide
+    slide.Duplicate
+    
+    ' Get the currently selected shape
+    Set selectedShape = ActiveWindow.Selection.ShapeRange(1)
+    
+    ' Create a duplicate of the selected shape on the same position
+    With selectedShape.Duplicate
+        .Left = selectedShape.Left
+        .Top = selectedShape.Top
+    End With
+    
+    ' Add a rectangle shape that covers the entire slide
+    Set rectangle = slide.Shapes.AddShape(msoShapeRectangle, 0, 0, _
+        Application.ActivePresentation.PageSetup.SlideWidth, _
+        Application.ActivePresentation.PageSetup.SlideHeight)
+    
+    ' Set the fill format of the rectangle to semi-transparent
+    rectangle.Fill.ForeColor.RGB = RGB(0, 0, 0) ' Set the desired color
+    rectangle.Fill.Transparency = 0.5 ' Set the desired transparency level (0.0 to 1.0)
+    
+    ' Add the duplicate shape and the rectangle to the selection
+    Call slide.Shapes.Range(Array(selectedShape.Name, rectangle.Name)).Select
+    
+    ' Merge the shapes by combining the duplicate shape and the rectangle
+    Call slide.Shapes.Range(Array(selectedShape.Name, rectangle.Name)).MergeShapes(msoMergeCombine)
+    
+    ' Clean up
+    Set slide = Nothing
+    Set rectangle = Nothing
+    Set selectedShape = Nothing
+    Set duplicateShape = Nothing
+End Sub
+
+Sub DrawRectangle()
+    Dim selectedShape As Shape
+    Dim rectangleShape As Shape
+    Dim slide As slide
+    Dim topSpace As Long
+    Dim bottomSpace As Long
+    Dim shapeTop As Long
+    Dim shapeBottom As Long
+    
+    ' Check if a shape is selected
+    If Not ActiveWindow.Selection.Type = ppSelectionShapes Then
+        MsgBox "Please select a shape."
+        Exit Sub
+    End If
+    
+    Set selectedShape = ActiveWindow.Selection.ShapeRange(1)
+    Set slide = selectedShape.Parent
+    
+    ' Calculate available space above and below the selected shape
+    topSpace = selectedShape.Top - slide.Shapes(1).Top
+    bottomSpace = slide.Shapes(slide.Shapes.Count).Top + slide.Shapes(slide.Shapes.Count).Height - selectedShape.Top - selectedShape.Height
+    
+    ' Determine if there is more space above or below the selected shape
+    If topSpace >= bottomSpace Then
+        ' Draw rectangle above the selected shape
+        shapeTop = selectedShape.Top - topSpace * 4 / 5 ' Adjust the value as needed
+        shapeBottom = selectedShape.Top
+    Else
+        ' Draw rectangle below the selected shape
+        shapeTop = selectedShape.Top + selectedShape.Height
+        shapeBottom = selectedShape.Top + selectedShape.Height + bottomSpace * 4 / 5 ' Adjust the value as needed
+    End If
+    
+    ' Create the rectangle shape
+    Set rectangleShape = slide.Shapes.AddShape(msoShapeRectangle, selectedShape.Left, shapeTop, selectedShape.Width, shapeBottom - shapeTop)
+    rectangleShape.Fill.ForeColor.RGB = RGB(255, 0, 0) ' Set the fill color as needed
+    rectangleShape.Line.Visible = msoFalse ' Hide the outline
+    
+    ' Optional: Select the rectangle shape
+    rectangleShape.Select
+End Sub
+
+
+
