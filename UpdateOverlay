@@ -1,0 +1,75 @@
+Sub CopyShapesAndIterate()
+    Dim selectedSlide As slide
+    Dim selectedShapes As Shapes
+    Dim copiedShapes As New Collection
+    Dim i As Integer
+    Dim numSlidesToIterate As Integer
+    
+    ' Get the currently selected slide
+    Set selectedSlide = ActiveWindow.Selection.SlideRange(1)
+    
+    ' Copy all shapes on the selected slide
+    Set selectedShapes = selectedSlide.Shapes
+    For Each Shape In selectedShapes
+        copiedShapes.Add Shape
+    Next Shape
+    
+    ' Specify the number of slides to iterate
+    numSlidesToIterate = InputBox("Hoeveel slides", "Update slides") ' Change this value as needed
+    
+    ' Iterate over the specified number of slides
+    For i = selectedSlide.slidenumber + 1 To selectedSlide.slidenumber + numSlidesToIterate
+        ' Move to the next slide
+        
+            Set selectedSlide = getslide(i) 'ActivePresentation.Slides(selectedSlide.SlideIndex + i)
+            
+            For j = 1 To selectedSlide.Shapes.Count
+                Debug.Print selectedSlide.Shapes(j).Name
+            Next j
+            
+            ' Delete all shapes on the current slide except the top 2
+            For j = 1 To selectedSlide.Shapes.Count - 2
+                selectedSlide.Shapes(1).Delete
+            Next j
+            
+            selectedSlide.Shapes(1).ZOrder msoBringToFront
+            selectedSlide.Shapes(1).ZOrder msoBringToFront
+            
+            For j = 1 To selectedSlide.Shapes.Count - 2
+                selectedSlide.Shapes(1).Delete
+            Next j
+            
+            
+            'selectedSlide.Shapes(selectedSlide.Shapes.Count).Delete
+            
+            ' Paste the copied shapes on the current slide
+            For Each copiedShape In copiedShapes
+                copiedShape.Copy
+                selectedSlide.Shapes.Paste
+            Next copiedShape
+            selectedSlide.Shapes(1).ZOrder msoBringToFront
+            selectedSlide.Shapes(1).ZOrder msoBringToFront
+        
+    Next i
+End Sub
+
+Function getslide(slidenumber As Integer)
+Dim sld As slide
+Dim result As slide
+Dim slide As slide
+For Each sld In ActivePresentation.Slides
+    
+    If sld.slidenumber = slidenumber Then
+       Set result = sld
+            Exit For
+    End If
+Next sld
+
+
+Set getslide = result
+
+End Function
+
+
+
+
