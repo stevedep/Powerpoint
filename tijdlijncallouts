@@ -13,7 +13,7 @@ Sub create_callouts()
     
 
     'for each task
-        For i = 1 To lstActivities.ListRows.Count
+        For i = lstActivities.ListRows.Count To 1 Step -1
                 'if the task ID is greater than 0
                If Len(LTrim(RTrim(lstActivities.ListColumns("ID").DataBodyRange(i).Value))) > 0 Then
                    ' start creating a new fn_new_callout, navigate to the function to learn more.
@@ -43,8 +43,6 @@ Sub create_callouts()
                     Call format(currentslide, tr, "Omschrijving")
                     Call format(currentslide, tr, "Extra")
                     Call format(currentslide, tr, "Bron")
-                    
-                    
                     
                    'We want to make certain fields bold.
                   Dim arr As Variant
@@ -142,7 +140,7 @@ End With
     Set currentslide = sld 'bit redundant..
     
     ' depending on the x position of the bar we draw the call out either on the left or right side
-    If 1 = 2 Then 'x > Application.ActivePresentation.PageSetup.SlideWidth * 0.4 Then
+    If x > Application.ActivePresentation.PageSetup.SlideWidth * 0.4 Then
            Set ffb = currentslide.Shapes.BuildFreeform(msoEditingCorner, x, y)
             With ffb
                 .AddNodes msoSegmentLine, msoEditingAuto, x - 40, 135
@@ -180,7 +178,7 @@ End With
     
     
     ' Merge the shapes by combining the duplicate shape and the rectangle
-    Call currentslide.Shapes.Range(Array(shp.Name, rec_shp.Name)).MergeShapes(msoMergeSubtract)
+    'Call currentslide.Shapes.Range(Array(shp.Name, rec_shp.Name)).MergeShapes(msoMergeSubtract)
     
     Set shp = Nothing
     Set tb = Nothing
